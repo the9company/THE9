@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at Etherscan.io on 2021-10-16
-*/
-
 // SPDX-License-Identifier: MIT
 
 
@@ -1307,12 +1303,19 @@ contract THE9 is ERC20, Pausable, AccessControl {
     function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
     }
-
+    
+    function burn(address account, uint256 amount) public onlyRole(ORG_ADMIN_ROLE) {
+        _burn(account, _calcDecimal(amount));
+    }
+    
     function createAmountWithLock(address beneficiary, uint256 amount, uint256 firstReleaseTime, uint256 unlockPercent, uint256 lockCycleDays)
         public
         whenNotPaused
         onlyRole(ORG_ADMIN_ROLE) 
     {
+        if (firstReleaseTime == 0) {
+            firstReleaseTime = DEFAULT_RELEASE_TIMESTAMP;
+        }
         assert(_beforeSaveAmountWithLock(beneficiary, firstReleaseTime, unlockPercent, lockCycleDays));
         
         if (_checkExists(beneficiary)) {
@@ -1339,6 +1342,10 @@ contract THE9 is ERC20, Pausable, AccessControl {
         onlyRole(ORG_ADMIN_ROLE) 
     {
         require(_checkExists(beneficiary), "THE9: beneficiary not found");
+        
+        if (firstReleaseTime == 0) {
+            firstReleaseTime = DEFAULT_RELEASE_TIMESTAMP;
+        }
         assert(_beforeSaveAmountWithLock(beneficiary, firstReleaseTime, unlockPercent, lockCycleDays));
         
         BeneficiaryInfo memory beforeInfo = _getInfo(beneficiary);
@@ -1372,6 +1379,7 @@ contract THE9 is ERC20, Pausable, AccessControl {
         // check timestamp
         BeneficiaryInfo memory beforeInfo = _getInfo(beneficiary);
         require(_isReleased(beneficiary), "THE9: It hasn't been released yet");
+        require(beforeInfo.remainAmount > 0, "THE9: No remaining amount");
 
         // remainAmount
         uint256 remainAmount = beforeInfo.remainAmount;
@@ -1457,10 +1465,6 @@ contract THE9 is ERC20, Pausable, AccessControl {
         require(unlockPercent > 0, "THE9: percentage cannot be zero");
         require(unlockPercent <= 100, "THE9: percentage cannot exceed 100");
         require(lockCycleDays > 0, "THE9: lock cycle days cannot be zero");
-        
-        if (firstReleaseTime == 0) {
-            firstReleaseTime = DEFAULT_RELEASE_TIMESTAMP;
-        }
         require(firstReleaseTime > block.timestamp, "THE9: first release time is before current time");
         
         return true;
