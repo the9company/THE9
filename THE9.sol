@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at Etherscan.io on 2021-11-01
-*/
-
 // SPDX-License-Identifier: MIT
 
 
@@ -1163,21 +1159,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         emit Transfer(address(0), account, amount);
 
         _afterTokenTransfer(address(0), account, amount);
-    }
-
-    /**
-     * @dev Destroys `amount` tokens from `account`, reducing the
-     * total supply.
-     *
-     * Emits a {Transfer} event with `to` set to the zero address.
-     *
-     * Requirements:
-     *
-     * - `account` cannot be the zero address.
-     * - `account` must have at least `amount` tokens.
-     */
-    
-
+    }    
     /**
      * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
      *
@@ -1256,7 +1238,7 @@ pragma solidity >=0.8.2 <0.9.0;
 
 
 
-contract THE9TEST is ERC20, Pausable, AccessControl {
+contract THE9 is ERC20, Pausable, AccessControl {
     uint256 constant DEFAULT_RELEASE_TIMESTAMP = 4102444800; // 2100년 January 1일 Friday AM 12:00:00
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant ORG_ADMIN_ROLE = keccak256("ORG_ADMIN_ROLE");
@@ -1273,7 +1255,7 @@ contract THE9TEST is ERC20, Pausable, AccessControl {
     mapping(address => BeneficiaryInfo) private _addressBeneficiaryInfo;
     address[] public Beneficiaries;
 
-    constructor() ERC20("THE9TEST", "THE9TEST") {
+    constructor() ERC20("THE9", "THE9") {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(PAUSER_ROLE, _msgSender());
         _setupRole(ORG_ADMIN_ROLE, _msgSender());
@@ -1292,7 +1274,7 @@ contract THE9TEST is ERC20, Pausable, AccessControl {
     function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
     }
-
+       
     function createAmountWithLock(address beneficiary, uint256 amount, uint256 firstReleaseTime, uint256 unlockPercent, uint256 lockCycleDays)
         public
         whenNotPaused
@@ -1480,8 +1462,7 @@ contract THE9TEST is ERC20, Pausable, AccessControl {
         view 
         returns(uint256) 
     {
-        // return SafeMath.add(_getInfo(beneficiary).releaseTime, SafeMath.mul(_getInfo(beneficiary).lockCycleDays, 24*60*60)); // per day
-        return SafeMath.add(_getInfo(beneficiary).releaseTime, SafeMath.mul(_getInfo(beneficiary).lockCycleDays, 60)); // per minutes
+        return SafeMath.add(_getInfo(beneficiary).releaseTime, SafeMath.mul(_getInfo(beneficiary).lockCycleDays, 24*60*60)); // per day
     }
     
     function _checkExists(address beneficiary) 
