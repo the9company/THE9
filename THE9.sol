@@ -1,3 +1,7 @@
+/**
+ *Submitted for verification at Etherscan.io on 2021-11-01
+*/
+
 // SPDX-License-Identifier: MIT
 
 
@@ -1172,6 +1176,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * - `account` cannot be the zero address.
      * - `account` must have at least `amount` tokens.
      */
+     /*
     function _burn(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: burn from the zero address");
 
@@ -1188,6 +1193,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
         _afterTokenTransfer(account, address(0), amount);
     }
+    */
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
@@ -1267,7 +1273,7 @@ pragma solidity >=0.8.2 <0.9.0;
 
 
 
-contract THE9 is ERC20, Pausable, AccessControl {
+contract THE9TEST is ERC20, Pausable, AccessControl {
     uint256 constant DEFAULT_RELEASE_TIMESTAMP = 4102444800; // 2100년 January 1일 Friday AM 12:00:00
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant ORG_ADMIN_ROLE = keccak256("ORG_ADMIN_ROLE");
@@ -1284,7 +1290,7 @@ contract THE9 is ERC20, Pausable, AccessControl {
     mapping(address => BeneficiaryInfo) private _addressBeneficiaryInfo;
     address[] public Beneficiaries;
 
-    constructor() ERC20("THE9", "THE9") {
+    constructor() ERC20("THE9TEST", "THE9TEST") {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(PAUSER_ROLE, _msgSender());
         _setupRole(ORG_ADMIN_ROLE, _msgSender());
@@ -1303,11 +1309,11 @@ contract THE9 is ERC20, Pausable, AccessControl {
     function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
     }
-    
+    /*
     function burn(address account, uint256 amount) public onlyRole(ORG_ADMIN_ROLE) {
         _burn(account, _calcDecimal(amount));
     }
-    
+    */
     function createAmountWithLock(address beneficiary, uint256 amount, uint256 firstReleaseTime, uint256 unlockPercent, uint256 lockCycleDays)
         public
         whenNotPaused
@@ -1495,7 +1501,8 @@ contract THE9 is ERC20, Pausable, AccessControl {
         view 
         returns(uint256) 
     {
-        return SafeMath.add(_getInfo(beneficiary).releaseTime, SafeMath.mul(_getInfo(beneficiary).lockCycleDays, 24*60*60)); // per day
+        // return SafeMath.add(_getInfo(beneficiary).releaseTime, SafeMath.mul(_getInfo(beneficiary).lockCycleDays, 24*60*60)); // per day
+        return SafeMath.add(_getInfo(beneficiary).releaseTime, SafeMath.mul(_getInfo(beneficiary).lockCycleDays, 60)); // per minutes
     }
     
     function _checkExists(address beneficiary) 
